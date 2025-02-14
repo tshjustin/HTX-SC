@@ -1,5 +1,6 @@
 ### HTX TC 
 
+To get started: 
 ```
 npm run server 
 
@@ -16,3 +17,4 @@ TypeScript + React: Building UI Components / Adds type definitions to data struc
 
 
 ShadCN / Lucid React / Tailwind: Styling 
+
