@@ -49,7 +49,7 @@ function App() {
           <div className="mb-8">
             <div className="flex items-start">
               <img 
-                src="https://www.htx.gov.sg/images/default-source/default-album/htx-logo.png" 
+                src="/assets/htx-logo.png" 
                 alt="HTX Logo" 
                 className="h-20 object-contain"
               />

@@ -18,7 +18,7 @@ export async function updateEntry(
   updates: Partial<FeedbackEntry>
 ): Promise<void> {
   try {
-    const response = await fetch('/api/update', {
+    const response = await fetch('/api/updateJSONL', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,7 +31,12 @@ export async function updateEntry(
     });
 
     if (!response.ok) {
-      throw new Error('Failed to update entry');
+      throw new Error(`Failed to update entry: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to update entry');
     }
   } catch (error) {
     console.error('Error updating entry:', error);
