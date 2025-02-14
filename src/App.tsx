@@ -1,0 +1,145 @@
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, XCircle, MessageSquare } from 'lucide-react';
+import type { FeedbackFlag } from './types';
+import { useQuestions } from './hooks/useQuestions';
+
+function App() {
+  const { currentEntry, loading, handleChoice, isComplete } = useQuestions();
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedback, setFeedback] = useState('');
+
+  const onChoice = (flag: FeedbackFlag) => {
+    if (flag === 2) {
+      setShowFeedback(true);
+    } else {
+      handleChoice(flag);
+      setShowFeedback(false);
+    }
+  };
+
+  const submitFeedback = () => {
+    handleChoice(2, feedback);
+    setShowFeedback(false);
+    setFeedback('');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-blue-500 flex items-center justify-center">
+        <div className="text-white text-2xl">Loading questions...</div>
+      </div>
+    );
+  }
+
+  if (isComplete) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-blue-500 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-xl shadow-2xl">
+          <h2 className="text-2xl font-bold text-purple-800 mb-4">All Done!</h2>
+          <p className="text-gray-700">You have completed all available questions.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-blue-500">
+      <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+        <div className="flex-1 bg-gray-100 rounded-xl shadow-2xl p-8 flex flex-col">
+          <div className="mb-8">
+            <div className="flex items-start">
+              <img 
+                src="https://www.htx.gov.sg/images/default-source/default-album/htx-logo.png" 
+                alt="HTX Logo" 
+                className="h-20 object-contain"
+              />
+            </div>
+            <div className="flex flex-col items-center -mt-16">
+              <h1 className="text-4xl font-bold text-purple-800 mb-4">
+                HTX Tech Connect
+              </h1>
+              <div className="h-1 w-[70%] bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 rounded-full"></div>
+            </div>
+          </div>
+          
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Instruction:
+            </h2>
+            <p className="text-xl text-gray-700 bg-purple-50 p-6 rounded-lg">
+              {currentEntry?.instruct}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+            <div className="bg-blue-50 p-8 rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg flex flex-col">
+              <h3 className="text-xl font-semibold text-blue-800 mb-4">Response 1</h3>
+              <p className="text-lg text-gray-700 flex-grow overflow-y-auto">
+                {currentEntry?.['output-o1']}
+              </p>
+            </div>
+            
+            <div className="bg-purple-50 p-8 rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg flex flex-col">
+              <h3 className="text-xl font-semibold text-purple-800 mb-4">Response 2</h3>
+              <p className="text-lg text-gray-700 flex-grow overflow-y-auto">
+                {currentEntry?.['output-qwen']}
+              </p>
+            </div>
+          </div>
+
+          {!showFeedback ? (
+            <div className="flex justify-center gap-8 mt-8 pt-4 border-t border-gray-200">
+              <button
+                onClick={() => onChoice(0)}
+                className="flex items-center gap-3 px-12 py-6 text-xl bg-blue-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-blue-700"
+              >
+                <ChevronLeft className="w-8 h-8" />
+                Choose Response 1
+              </button>
+              
+              <button
+                onClick={() => onChoice(2)}
+                className="flex items-center gap-3 px-12 py-6 text-xl bg-gray-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-gray-700"
+              >
+                <XCircle className="w-8 h-8" />
+                Neither
+              </button>
+              
+              <button
+                onClick={() => onChoice(1)}
+                className="flex items-center gap-3 px-12 py-6 text-xl bg-purple-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
+              >
+                Choose Response 2
+                <ChevronRight className="w-8 h-8" />
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-6 mt-8 pt-4 border-t border-gray-200">
+              <div className="flex items-start gap-3">
+                <MessageSquare className="w-8 h-8 text-purple-600 mt-2" />
+                <textarea
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  placeholder="Please provide your feedback..."
+                  className="flex-1 p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  rows={4}
+                />
+              </div>
+              
+              <div className="flex justify-center">
+                <button
+                  onClick={submitFeedback}
+                  className="px-12 py-6 text-xl bg-purple-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
+                >
+                  Submit Feedback
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
