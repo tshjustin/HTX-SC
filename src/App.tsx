@@ -1,12 +1,39 @@
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, XCircle, MessageSquare } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, XCircle, MessageSquare, SkipForward } from 'lucide-react';
 import type { FeedbackFlag } from './types';
 import { useQuestions } from './hooks/useQuestions';
 
 function App() {
-  const { currentEntry, loading, handleChoice, isComplete } = useQuestions();
+  const { currentEntry, loading, handleChoice, handleSkip, hasSkippedQuestions, isComplete } = useQuestions();
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState('');
+
+  // Keyboard event listener 
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+
+      // Only handle keyboard shortcuts if not showing feedback form
+      if (!showFeedback) {
+        switch (event.key) {
+          case 'ArrowLeft':
+            onChoice(0);
+            break;
+          case 'ArrowRight':
+            onChoice(1);
+            break;
+          case 'ArrowUp':
+            onChoice(2);
+            break;
+          case 'ArrowDown':
+            handleSkip();
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [showFeedback, handleChoice, handleSkip]); // dependencies 
 
   const onChoice = (flag: FeedbackFlag) => {
     if (flag === 2) {
@@ -73,14 +100,20 @@ function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
             <div className="bg-blue-50 p-8 rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg flex flex-col">
-              <h3 className="text-xl font-semibold text-blue-800 mb-4">Response 1</h3>
+              <h3 className="text-xl font-semibold text-blue-800 mb-4 flex items-center gap-2">
+                Response 1 
+                <span className="text-sm text-gray-500">(← Left Arrow)</span>
+              </h3>
               <p className="text-lg text-gray-700 flex-grow overflow-y-auto">
                 {currentEntry?.['output-o1']}
               </p>
             </div>
             
             <div className="bg-purple-50 p-8 rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg flex flex-col">
-              <h3 className="text-xl font-semibold text-purple-800 mb-4">Response 2</h3>
+              <h3 className="text-xl font-semibold text-purple-800 mb-4 flex items-center gap-2">
+                Response 2
+                <span className="text-sm text-gray-500">(→ Right Arrow)</span>
+              </h3>
               <p className="text-lg text-gray-700 flex-grow overflow-y-auto">
                 {currentEntry?.['output-qwen']}
               </p>
@@ -88,30 +121,47 @@ function App() {
           </div>
 
           {!showFeedback ? (
-            <div className="flex justify-center gap-8 mt-8 pt-4 border-t border-gray-200">
-              <button
-                onClick={() => onChoice(0)}
-                className="flex items-center gap-3 px-12 py-6 text-xl bg-blue-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-blue-700"
-              >
-                <ChevronLeft className="w-8 h-8" />
-                Choose Response 1
-              </button>
+            <div className="flex flex-col gap-4 mt-8 pt-4 border-t border-gray-200">
+              <div className="flex justify-center gap-8">
+                <button
+                  onClick={() => onChoice(0)}
+                  className="flex items-center gap-3 px-12 py-6 text-xl bg-blue-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-blue-700"
+                >
+                  <ChevronLeft className="w-8 h-8" />
+                  Choose Response 1
+                </button>
+                
+                <button
+                  onClick={() => onChoice(2)}
+                  className="flex items-center gap-3 px-12 py-6 text-xl bg-gray-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-gray-700"
+                  title="Press ↑ Up Arrow"
+                >
+                  <XCircle className="w-8 h-8" />
+                  Neither
+                  <span className="text-sm ml-2">(↑ Up Arrow)</span>
+                </button>
+                
+                <button
+                  onClick={() => onChoice(1)}
+                  className="flex items-center gap-3 px-12 py-6 text-xl bg-purple-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
+                >
+                  Choose Response 2
+                  <ChevronRight className="w-8 h-8" />
+                </button>
+              </div>
               
-              <button
-                onClick={() => onChoice(2)}
-                className="flex items-center gap-3 px-12 py-6 text-xl bg-gray-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-gray-700"
-              >
-                <XCircle className="w-8 h-8" />
-                Neither
-              </button>
-              
-              <button
-                onClick={() => onChoice(1)}
-                className="flex items-center gap-3 px-12 py-6 text-xl bg-purple-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
-              >
-                Choose Response 2
-                <ChevronRight className="w-8 h-8" />
-              </button>
+              <div className="flex justify-center">
+                <button
+                  onClick={handleSkip}
+                  className="flex items-center gap-2 px-8 py-3 text-lg text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                  title="Press ↓ Down Arrow"
+                >
+                  <SkipForward className="w-5 h-5" />
+                  Skip Question 
+                  <span className="text-sm ml-2">(↓ Down Arrow)</span>
+                  {hasSkippedQuestions && " (Skipped questions will be shown later)"}
+                </button>
+              </div>
             </div>
           ) : (
             <div className="space-y-6 mt-8 pt-4 border-t border-gray-200">
@@ -126,12 +176,21 @@ function App() {
                 />
               </div>
               
-              <div className="flex justify-center">
+              <div className="flex justify-center gap-4">
                 <button
                   onClick={submitFeedback}
                   className="px-12 py-6 text-xl bg-purple-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
                 >
                   Submit Feedback
+                </button>
+                <button
+                  onClick={() => {
+                    setShowFeedback(false);
+                    setFeedback('');
+                  }}
+                  className="px-12 py-6 text-xl bg-gray-500 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-gray-600"
+                >
+                  Cancel
                 </button>
               </div>
             </div>
