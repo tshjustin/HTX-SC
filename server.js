@@ -59,7 +59,7 @@ app.post('/api/updateJSONL', async (req, res) => {
   }
 });
 
-const PORT = 3001;  // Prevent vite conflicts 
+const PORT = 3101;  // Prevent vite conflicts 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });

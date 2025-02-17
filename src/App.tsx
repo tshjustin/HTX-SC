@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, XCircle, MessageSquare, SkipForward } from 'lucide-react';
+import { ChevronLeft, ChevronRight, XCircle, MessageSquare, SkipForward, Forward } from 'lucide-react';
 import type { FeedbackFlag } from './types';
 import { useQuestions } from './hooks/useQuestions';
 
 function App() {
-  const { currentEntry, loading, handleChoice, handleSkip, hasSkippedQuestions, isComplete } = useQuestions();
+  const { 
+    currentEntry, 
+    loading, 
+    handleChoice, 
+    handleSkip, 
+    hasSkippedQuestions, 
+    isComplete,
+    loadNextSet,
+    currentSet
+  } = useQuestions();
+  
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState('');
 
   // Keyboard event listener 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-
       // Only handle keyboard shortcuts if not showing feedback form
       if (!showFeedback) {
         switch (event.key) {
@@ -33,7 +42,7 @@ function App() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [showFeedback, handleChoice, handleSkip]); // dependencies 
+  }, [showFeedback, handleChoice, handleSkip]); 
 
   const onChoice = (flag: FeedbackFlag) => {
     if (flag === 2) {
@@ -61,15 +70,23 @@ function App() {
   if (isComplete) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-blue-500 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl shadow-2xl">
-          <h2 className="text-2xl font-bold text-purple-800 mb-4">All Done!</h2>
-          <p className="text-gray-700">You have completed all available questions.</p>
+        <div className="bg-white p-8 rounded-xl shadow-2xl text-center">
+          <h2 className="text-2xl font-bold text-purple-800 mb-4">Set {currentSet} Complete!</h2>
+          <p className="text-gray-700 mb-8">You have completed all questions in this set.</p>
+          <button
+            onClick={loadNextSet}
+            className="flex items-center gap-2 px-8 py-4 text-xl bg-purple-600 text-white rounded-lg mx-auto transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
+          >
+            <Forward className="w-6 h-6" />
+            Load Next Question Set
+          </button>
         </div>
       </div>
     );
   }
 
   return (
+
     <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-blue-500">
       <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
         <div className="flex-1 bg-gray-100 rounded-xl shadow-2xl p-8 flex flex-col">
@@ -80,6 +97,9 @@ function App() {
                 alt="HTX Logo" 
                 className="h-20 object-contain"
               />
+              <div className="ml-auto text-lg font-semibold text-purple-800">
+                Set {currentSet}
+              </div>
             </div>
             <div className="flex flex-col items-center -mt-16">
               <h1 className="text-4xl font-bold text-purple-800 mb-4">
@@ -88,13 +108,13 @@ function App() {
               <div className="h-1 w-[70%] bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 rounded-full"></div>
             </div>
           </div>
-          
+
           <div className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Instruction:
             </h2>
             <p className="text-xl text-gray-700 bg-purple-50 p-6 rounded-lg">
-              {currentEntry?.instruct}
+              {currentEntry?.['instruction']}
             </p>
           </div>
 

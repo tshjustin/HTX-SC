@@ -1,23 +1,22 @@
 import { useState, useEffect } from 'react';
-import type { FeedbackEntry } from '../types';
+import type { FeedbackEntry, QuestionSet } from '../types';
 import { readJSONLFile, updateEntry } from '../utils/fileHandler';
-
-const JSONL_PATH = 'data/combined.jsonl';
 
 export function useQuestions() {
   const [entries, setEntries] = useState<FeedbackEntry[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [skippedQuestions, setSkippedQuestions] = useState<Set<number>>(new Set());
+  const [questionSet, setQuestionSet] = useState<QuestionSet>({ currentSet: 1 });
 
   useEffect(() => {
     loadQuestions();
-  }, []);
+  }, [questionSet.currentSet]);
 
   const loadQuestions = async () => {
     try {
-      console.log('Loading questions');
-      const loadedEntries = await readJSONLFile(JSONL_PATH);
+      console.log('Loading questions from set', questionSet.currentSet);
+      const loadedEntries = await readJSONLFile(`data/set_${questionSet.currentSet}.jsonl`);
       console.log('Loaded entries:', loadedEntries);
       setEntries(loadedEntries);
       
@@ -43,7 +42,7 @@ export function useQuestions() {
       };
 
       // Update the JSONL file
-      await updateEntry(JSONL_PATH, currentIndex, updates);
+      await updateEntry(`data/set_${questionSet.currentSet}.jsonl`, currentIndex, updates);
       console.log('Successfully updated entry');
 
       // Remove from skipped questions if it was skipped
@@ -96,6 +95,12 @@ export function useQuestions() {
     return currentIdx;
   };
 
+  const loadNextSet = () => {
+    setLoading(true);
+    setSkippedQuestions(new Set());
+    setQuestionSet(prev => ({ ...prev, currentSet: prev.currentSet + 1 }));
+  };
+
   const hasSkippedQuestions = skippedQuestions.size > 0;
 
   return {
@@ -105,6 +110,8 @@ export function useQuestions() {
     handleChoice,
     handleSkip,
     hasSkippedQuestions,
+    loadNextSet,
+    currentSet: questionSet.currentSet,
     isComplete: entries.every((entry, index) => entry.flag !== null || skippedQuestions.has(index)),
   };
 }
