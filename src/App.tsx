@@ -12,7 +12,9 @@ function App() {
     hasSkippedQuestions, 
     isComplete,
     loadNextSet,
-    currentSet
+    currentSet,
+    currentIndex,
+    totalQuestions
   } = useQuestions();
   
   const [showFeedback, setShowFeedback] = useState(false);
@@ -98,7 +100,7 @@ function App() {
                 className="h-20 object-contain"
               />
               <div className="ml-auto text-lg font-semibold text-purple-800">
-                Set {currentSet}
+                Set {currentSet}({Math.min(currentIndex + 1, totalQuestions)} / {totalQuestions})        
               </div>
             </div>
             <div className="flex flex-col items-center -mt-16">
