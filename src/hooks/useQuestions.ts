@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { FeedbackEntry } from '../types';
 import { readJSONLFile, updateEntry } from '../utils/fileHandler';
 
-const JSONL_PATH = 'data/questions.jsonl';
+const JSONL_PATH = 'data/combined.jsonl';
 
 export function useQuestions() {
   const [entries, setEntries] = useState<FeedbackEntry[]>([]);
