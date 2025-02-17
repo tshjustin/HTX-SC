@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, XCircle, MessageSquare, SkipForward, Forward } from 'lucide-react';
+import { ChevronLeft, ChevronRight, XCircle, SkipForward, Forward } from 'lucide-react';
 import type { FeedbackFlag } from './types';
 import { useQuestions } from './hooks/useQuestions';
+import SpeechFeedback from './components/SpeechFeedback';
 
 function App() {
   const { 
@@ -23,6 +24,7 @@ function App() {
   // Keyboard event listener 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
+
       // Only handle keyboard shortcuts if not showing feedback form
       if (!showFeedback) {
         const triggerButtonAnimation = (buttonId: string) => {
@@ -31,7 +33,7 @@ function App() {
             button.classList.add('animate-buttonPress');
             setTimeout(() => {
               button.classList.remove('animate-buttonPress');
-            }, 200); // Match animation duration
+            }, 200);
           }
         };
 
@@ -103,7 +105,7 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-blue-500">
       <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
         <div className="flex-1 bg-gray-100 rounded-xl shadow-2xl p-8 flex flex-col justify-between">
-          <div className="flex flex-col flex-1">
+        <div className="flex flex-col flex-1">
             <div className="mb-8">
               <div className="flex items-start">
                 <img 
@@ -112,7 +114,7 @@ function App() {
                   className="h-20 object-contain"
                 />
                 <div className="ml-auto text-lg font-semibold text-purple-800">
-                  Set {currentSet}({Math.min(currentIndex + 1, totalQuestions)} / {totalQuestions})
+                  Set {currentSet} ({Math.min(currentIndex + 1, totalQuestions)} / {totalQuestions})
                 </div>
               </div>
               <div className="flex flex-col items-center -mt-16">
@@ -158,7 +160,7 @@ function App() {
               </div>
             </div>
           </div>
-
+          
           {!showFeedback ? (
             <div className="mt-auto border-t border-gray-200">
               <div className="flex justify-between gap-4 p-4">
@@ -200,41 +202,20 @@ function App() {
                   <SkipForward className="w-6 h-6" />
                   Skip Question 
                   <span className="text-sm ml-2">(↓ Down Arrow)</span>
-                  {hasSkippedQuestions && " (Skipped questions will be shown later)"}
+                  {hasSkippedQuestions}
                 </button>
               </div>
             </div>
           ) : (
-            <div className="space-y-6 mt-8 pt-4 border-t border-gray-200">
-              <div className="flex items-start gap-3">
-                <MessageSquare className="w-8 h-8 text-purple-600 mt-2" />
-                <textarea
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  placeholder="Please provide your feedback..."
-                  className="flex-1 p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  rows={4}
-                />
-              </div>
-              
-              <div className="flex justify-center gap-4">
-                <button
-                  onClick={submitFeedback}
-                  className="px-12 py-6 text-xl bg-purple-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
-                >
-                  Submit Feedback
-                </button>
-                <button
-                  onClick={() => {
-                    setShowFeedback(false);
-                    setFeedback('');
-                  }}
-                  className="px-12 py-6 text-xl bg-gray-500 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-gray-600"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
+            <SpeechFeedback
+              feedback={feedback}
+              setFeedback={setFeedback}
+              onSubmit={submitFeedback}
+              onCancel={() => {
+                setShowFeedback(false);
+                setFeedback('');
+              }}
+            />
           )}
         </div>
       </div>
