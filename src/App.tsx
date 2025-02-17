@@ -112,7 +112,7 @@ function App() {
                   className="h-20 object-contain"
                 />
                 <div className="ml-auto text-lg font-semibold text-purple-800">
-                  Set {currentSet}({Math.min(currentIndex + 1, totalQuestions)} / {totalQuestions})
+                  Set {currentSet} ({Math.min(currentIndex + 1, totalQuestions)} / {totalQuestions})
                 </div>
               </div>
               <div className="flex flex-col items-center -mt-16">
@@ -128,31 +128,31 @@ function App() {
               className="animate-fadeIn flex flex-col flex-1"
             >
             <div className="mb-4">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              <h2 className="text-3xl font-semibold text-gray-800 mb-4">
                 Instruction:
               </h2>
-              <p className="text-xl text-gray-700 bg-purple-50 p-6 rounded-lg">
+              <p className="text-2xl text-gray-700 bg-purple-50 p-6 rounded-lg">
                 {currentEntry?.['instruction']}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1 mb-8">
               <div className="bg-blue-50 p-8 rounded-lg flex flex-col min-h-[400px]">
-                <h3 className="text-xl font-semibold text-blue-800 mb-4 flex items-center gap-2">
+                <h3 className="text-2xl font-semibold text-blue-800 mb-4 flex items-center gap-2">
                   Response 1 
                   <span className="text-sm text-gray-500">(← Left Arrow)</span>
                 </h3>
-                <p className="text-lg text-gray-700 flex-grow overflow-y-auto">
+                <p className="text-xl text-gray-700 flex-grow overflow-y-auto">
                   {currentEntry?.['output-o1']}
                 </p>
               </div>
               
               <div className="bg-purple-50 p-8 rounded-lg flex flex-col min-h-[400px]">
-                <h3 className="text-xl font-semibold text-purple-800 mb-4 flex items-center gap-2">
+                <h3 className="text-2xl font-semibold text-purple-800 mb-4 flex items-center gap-2">
                   Response 2
                   <span className="text-sm text-gray-500">(→ Right Arrow)</span>
                 </h3>
-                <p className="text-lg text-gray-700 flex-grow overflow-y-auto">
+                <p className="text-xl text-gray-700 flex-grow overflow-y-auto">
                   {currentEntry?.['output-qwen']}
                 </p>
               </div>
@@ -194,13 +194,13 @@ function App() {
               <div className="flex justify-center pb-4">
                 <button
                   onClick={handleSkip}
-                  className="flex items-center gap-2 px-8 py-4 text-xl text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="flex items-center gap-2 px-8 py-4 text-2xl text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 active:animate-buttonPress focus:outline-none focus:ring-2 focus:ring-gray-300"
                   title="Press ↓ Down Arrow"
                 >
                   <SkipForward className="w-6 h-6" />
                   Skip Question 
                   <span className="text-sm ml-2">(↓ Down Arrow)</span>
-                  {hasSkippedQuestions && " (Skipped questions will be shown later)"}
+                  {hasSkippedQuestions}
                 </button>
               </div>
             </div>
@@ -220,7 +220,7 @@ function App() {
               <div className="flex justify-center gap-4">
                 <button
                   onClick={submitFeedback}
-                  className="px-12 py-6 text-xl bg-purple-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
+                  className="px-12 py-6 text-2xl bg-purple-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
                 >
                   Submit Feedback
                 </button>
@@ -229,7 +229,7 @@ function App() {
                     setShowFeedback(false);
                     setFeedback('');
                   }}
-                  className="px-12 py-6 text-xl bg-gray-500 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-gray-600"
+                  className="px-12 py-6 text-2xl bg-gray-500 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-gray-600"
                 >
                   Cancel
                 </button>
