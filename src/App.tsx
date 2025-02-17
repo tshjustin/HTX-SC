@@ -23,6 +23,7 @@ function App() {
   // Keyboard event listener 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
+
       // Only handle keyboard shortcuts if not showing feedback form
       if (!showFeedback) {
         const triggerButtonAnimation = (buttonId: string) => {
@@ -31,7 +32,7 @@ function App() {
             button.classList.add('animate-buttonPress');
             setTimeout(() => {
               button.classList.remove('animate-buttonPress');
-            }, 200); // Match animation duration
+            }, 200); // animation duration 
           }
         };
 
@@ -111,13 +112,13 @@ function App() {
                   alt="HTX Logo" 
                   className="h-20 object-contain"
                 />
-                <div className="ml-auto text-lg font-semibold text-purple-800">
+                <div className="ml-auto text-xl font-semibold text-purple-800">
                   Set {currentSet} ({Math.min(currentIndex + 1, totalQuestions)} / {totalQuestions})
                 </div>
               </div>
               <div className="flex flex-col items-center -mt-16">
-                <h1 className="text-4xl font-bold text-purple-800 mb-4">
-                  HTX Tech Connect
+                <h1 className="text-5xl font-bold text-purple-800 mb-4">
+                  Help Us Train our AI Model! 
                 </h1>
                 <div className="h-1 w-[70%] bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 rounded-full"></div>
               </div>
@@ -128,31 +129,31 @@ function App() {
               className="animate-fadeIn flex flex-col flex-1"
             >
             <div className="mb-4">
-              <h2 className="text-3xl font-semibold text-gray-800 mb-4">
+              <h2 className="text-4xl font-semibold text-gray-800 mb-4">
                 Instruction:
               </h2>
-              <p className="text-2xl text-gray-700 bg-purple-50 p-6 rounded-lg">
+              <p className="text-3xl text-gray-700 bg-purple-50 p-6 rounded-lg">
                 {currentEntry?.['instruction']}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1 mb-8">
               <div className="bg-blue-50 p-8 rounded-lg flex flex-col min-h-[400px]">
-                <h3 className="text-2xl font-semibold text-blue-800 mb-4 flex items-center gap-2">
+                <h3 className="text-4xl font-semibold text-blue-800 mb-4 flex items-center gap-2">
                   Response 1 
-                  <span className="text-sm text-gray-500">(← Left Arrow)</span>
+                  <span className="text-base text-gray-500">(← Left Arrow)</span>
                 </h3>
-                <p className="text-xl text-gray-700 flex-grow overflow-y-auto">
+                <p className="text-2xl leading-loose text-gray-700 flex-grow overflow-y-auto">
                   {currentEntry?.['output-o1']}
                 </p>
               </div>
               
               <div className="bg-purple-50 p-8 rounded-lg flex flex-col min-h-[400px]">
-                <h3 className="text-2xl font-semibold text-purple-800 mb-4 flex items-center gap-2">
+                <h3 className="text-4xl font-semibold text-purple-800 mb-4 flex items-center gap-2">
                   Response 2
-                  <span className="text-sm text-gray-500">(→ Right Arrow)</span>
+                  <span className="text-base text-gray-500">(→ Right Arrow)</span>
                 </h3>
-                <p className="text-xl text-gray-700 flex-grow overflow-y-auto">
+                <p className="text-2xl leading-loose text-gray-700 flex-grow overflow-y-auto">
                   {currentEntry?.['output-qwen']}
                 </p>
               </div>
@@ -178,7 +179,7 @@ function App() {
                 >
                   <XCircle className="w-10 h-10" />
                   Neither
-                  <span className="text-sm ml-2">(↑ Up Arrow)</span>
+                  <span className="text-base ml-2">(↑ Up Arrow)</span>
                 </button>
                 
                 <button
@@ -199,7 +200,7 @@ function App() {
                 >
                   <SkipForward className="w-6 h-6" />
                   Skip Question 
-                  <span className="text-sm ml-2">(↓ Down Arrow)</span>
+                  <span className="text-base ml-2">(↓ Down Arrow)</span>
                   {hasSkippedQuestions}
                 </button>
               </div>
