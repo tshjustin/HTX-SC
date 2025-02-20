@@ -59,6 +59,24 @@ export function useQuestions() {
     }
   };
 
+  const skipRemainingQuestions = async () => {
+    // Get all remaining unanswered questions
+    const remainingQuestions = entries.reduce((acc: number[], entry, index) => {
+      if (entry.flag === null && !skippedQuestions.has(index)) {
+        acc.push(index);
+      }
+      return acc;
+    }, []);
+
+    // Add all remaining questions to skipped set
+    const newSkipped = new Set(skippedQuestions);
+    remainingQuestions.forEach(index => newSkipped.add(index));
+    setSkippedQuestions(newSkipped);
+
+    // This will trigger the isComplete check and show the "Load Next Set" page
+    await loadQuestions();
+  };
+
   const handleSkip = () => {
     // Add current question to skipped set
     const newSkipped = new Set(skippedQuestions);
@@ -117,6 +135,7 @@ export function useQuestions() {
     hasSkippedQuestions,
     loadNextSet,
     currentSet: questionSet.currentSet,
-    isComplete
+    isComplete,
+    skipRemainingQuestions
   };
 }
