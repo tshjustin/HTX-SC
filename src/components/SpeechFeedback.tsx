@@ -165,6 +165,16 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
     }
+    // Prevent empty feedback on submission
+    if (event.key === 'ArrowLeft' && !feedback.trim()) {
+      event.preventDefault();
+    }
+  };
+
+  const handleSubmit = () => {
+    if (feedback.trim()) {
+      onSubmit();
+    }
   };
 
   return (
@@ -226,13 +236,17 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
       </div>
       
       <div className="flex justify-center gap-4">
-        <button
-          onClick={onSubmit}
-          className="flex items-center gap-3 px-12 py-6 text-xl bg-purple-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
+        <button onClick={handleSubmit}
+                disabled={!feedback.trim()}
+                className={`flex items-center gap-3 px-12 py-6 text-xl rounded-lg transform transition-all duration-300 
+                  ${feedback.trim() 
+                    ? 'bg-purple-600 hover:bg-purple-700 hover:scale-110 hover:shadow-lg text-white' 
+                    : 'bg-purple-300 cursor-not-allowed text-white/80'}`}
         >
-          <ChevronLeft className="w-6 h-6" />
-          Submit Feedback
-          <span className="text-sm">(← Left Arrow)</span>
+
+        <ChevronLeft className="w-6 h-6" />
+        Submit Feedback
+        <span className="text-sm">(← Left Arrow)</span>
         </button>
         <button
           onClick={onCancel}
