@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Mic, MicOff, Trash2 } from 'lucide-react';
+import { MessageSquare, Mic, MicOff, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SpeechFeedbackProps {
   feedback: string;
@@ -94,11 +94,20 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
       }
     }
 
-    // Add keyboard listeners for 'v' and 'c' keys
+    // Add keyboard listeners for arrow keys, 'v' and 'c' keys
     const handleKeyPress = (event: KeyboardEvent) => {
-
+      // Left arrow for submit
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        onSubmit();
+      }
+      // Right arrow for cancel
+      else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        onCancel();
+      }
       //  'v' key for toggle recording
-      if (event.key.toLowerCase() === 'v' && !event.ctrlKey && !event.metaKey) {
+      else if (event.key.toLowerCase() === 'v' && !event.ctrlKey && !event.metaKey) {
         event.preventDefault();
         toggleListening();
       }
@@ -120,7 +129,7 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [setFeedback, isListening, recognition]);
+  }, [setFeedback, isListening, recognition, onSubmit, onCancel]);
 
   const toggleListening = () => {
     if (!recognition) {
@@ -168,7 +177,7 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               onKeyDown={handleTextareaKeyDown}
-              placeholder="Please provide your feedback..."
+              placeholder="Please provide your feedback...&#10;&#10;For voice, press V once to record. Feedback is recorded after pausing."             
               className="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               rows={4}
             />
@@ -219,15 +228,19 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
       <div className="flex justify-center gap-4">
         <button
           onClick={onSubmit}
-          className="px-12 py-6 text-xl bg-purple-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
+          className="flex items-center gap-3 px-12 py-6 text-xl bg-purple-600 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-purple-700"
         >
+          <ChevronLeft className="w-6 h-6" />
           Submit Feedback
+          <span className="text-sm">(← Left Arrow)</span>
         </button>
         <button
           onClick={onCancel}
-          className="px-12 py-6 text-xl bg-gray-500 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-gray-600"
+          className="flex items-center gap-3 px-12 py-6 text-xl bg-gray-500 text-white rounded-lg transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:bg-gray-600"
         >
           Cancel
+          <span className="text-sm">(→ Right Arrow)</span>
+          <ChevronRight className="w-6 h-6" />
         </button>
       </div>
     </div>
