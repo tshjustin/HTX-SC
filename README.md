@@ -1,20 +1,23 @@
 ### HTX TC 
 
-To get started: 
+#### Starting up 
+
+Upon building the container, `start.sh` is triggered and runs the start up script that builds the `vite` and `express` servers. 
+
 ```
-npm run server 
+cd HTX-SC 
 
-npm run dev 
+docker build -t htx-app .
+
+docker run -it --name htx-app -p 5176:5176 -p 3151:3151 htx-app
 ```
 
-`Vite`: For fast development and optimized production builds
+#### Shutting down
+`start.sh` contains a trap that kills the servers on `cntrl-c`. 
 
+#### Caution on ports 
+- If facing port issues, modify the `Dockerfile` and choose ports that may be free. Modify the docker run <ports:ports> to reflect these changes.
 
-`Express`: Backend server for file I/O 
+- If the **backend port is changed**, modify the backend port in `vite.config.ts` too. 
 
-
-`React + TypeScript` : Building UI Components / Adds type definitions to data structures & ensures type safety in function parameter
-
-
-`ShadCN / Lucid React / Tailwind`: Styling 
-
+- By default, Vite port = `5173`, Express port = `3000`

@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-
 WORKDIR /app
 
 COPY package*.json ./
@@ -19,9 +18,9 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE 5173 3101
+EXPOSE 5176 3151
 
-CMD ["bash"]
+RUN echo '#!/bin/bash\nnpm run server & npm run dev\ntail -f /dev/null' > /app/start.sh && \
+    chmod +x /app/start.sh
 
-# docker build -t htx-app .
-# docker run -it --name htx-app --network host htxsc
+CMD ["/app/start.sh"]
