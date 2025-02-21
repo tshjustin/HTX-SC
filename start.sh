@@ -1,12 +1,10 @@
 #!/bin/bash
 
-echo "start express port 3101"
 npm run server &
 SERVER_PID=$!
 
 sleep 5
 
-echo "start vite port 5173..."
 npm run dev &
 VITE_PID=$!
 

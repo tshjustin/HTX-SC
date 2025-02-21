@@ -18,7 +18,8 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE 5176 3151
+# for the sake of simplicity, only the frontend of the container is exposed 
+EXPOSE 5713 
 
 RUN echo '#!/bin/bash\nnpm run server & npm run dev\ntail -f /dev/null' > /app/start.sh && \
     chmod +x /app/start.sh

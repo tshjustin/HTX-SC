@@ -9,15 +9,21 @@ cd HTX-SC
 
 docker build -t htx-app .
 
-docker run -it --name htx-app -p 5176:5176 -p 3151:3151 htx-app
+docker run -it --name htx-app -p 5176:5173 htx-app
+
+curl http://localhost:5176 # check connection. If valid, then can be accessed already
 ```
 
-#### Shutting down
-`start.sh` contains a trap that kills the servers on `cntrl-c`. 
+#### Shutting down / Restart 
+
+if container was stopped, restart via: 
+```
+docker start -i htx-app 
+```
+
+`start.sh` contains a trap that kills the servers on `ctrl-c`. 
 
 #### Caution on ports 
-- If facing port issues, modify the `Dockerfile` and choose ports that may be free. Modify the docker run <ports:ports> to reflect these changes.
+In the container, `Express` listens on 3101, `Vite` listens on 5173. 
 
-- If the **backend port is changed**, modify the backend port in `vite.config.ts` too. 
-
-- By default, Vite port = `5173`, Express port = `3000`
+If there are ports being in used, modify the mapping <5176:5173> => <51xx:5173>
