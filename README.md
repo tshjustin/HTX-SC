@@ -26,4 +26,9 @@ docker start -i htx-app
 #### Caution on ports 
 In the container, `Express` listens on 3101, `Vite` listens on 5173. 
 
-If there are ports being in used, modify the mapping <5176:5173> => <51xx:5173>
+If the server's 5176 is being in used, modify the mapping <5176:5173> => <51xx:5173>
+
+
+#### Notes
+Any updates to the public/data/ is reflected inside the container and not mounted to q4_volume, so dont delete the 
+container before extracting the data out. 
