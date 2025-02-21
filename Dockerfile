@@ -19,7 +19,7 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE 5173 3111
+EXPOSE 5173 3101
 
 CMD ["bash"]
 

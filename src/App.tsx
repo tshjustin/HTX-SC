@@ -124,7 +124,7 @@ function App() {
               </div>
               <div className="flex flex-col items-center -mt-16">
                 <h1 className="text-4xl font-bold text-purple-800 mb-4">
-                  HTX Tech Connect
+                  Help us Train our AI Model! 
                 </h1>
                 <div className="h-1 w-[70%] bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 bg-300% animate-gradient rounded-full"></div>
               </div>
