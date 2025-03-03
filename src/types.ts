@@ -6,7 +6,7 @@ export interface FeedbackEntry {
   Feedback: string | null;
 }
 
-export type FeedbackFlag = 0 | 1 | 2 | null; // 0 = o1, 1 = qwen, 2 = neither
+export type FeedbackFlag = 0 | 1 | 2 | 3 | null; // 0 = o1, 1 = qwen, 2 = neither
 
 export interface QuestionSet {
   currentSet: number;

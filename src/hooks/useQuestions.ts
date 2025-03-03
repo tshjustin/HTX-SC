@@ -6,12 +6,57 @@ export function useQuestions() {
   const [entries, setEntries] = useState<FeedbackEntry[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [loading, setLoading] = useState(true);
-  const [skippedQuestions, setSkippedQuestions] = useState<Set<number>>(new Set());
   const [questionSet, setQuestionSet] = useState<QuestionSet>({ currentSet: 1 });
+  const [maxSetChecked, setMaxSetChecked] = useState<number>(1);
 
   useEffect(() => {
     loadQuestions();
   }, [questionSet.currentSet]);
+
+  // Function to find the first unanswered set
+  const findFirstUnansweredSet = async (startSet: number): Promise<number> => {
+    let currentSetToCheck = startSet;
+    let maxSetFound = startSet;
+    
+    try {
+      while (true) {
+        console.log(`Checking set ${currentSetToCheck} for unanswered questions...`);
+        
+        // Try to load this set
+        try {
+          const setEntries = await readJSONLFile(`data/set_${currentSetToCheck}.jsonl`);
+          
+          // If we successfully loaded this set, update maxSetFound
+          maxSetFound = Math.max(maxSetFound, currentSetToCheck);
+          
+          // Check if this set has any unanswered questions
+          // Important: Only count completely unanswered questions (flag === null)
+          // Skip questions marked with flag === 3
+          const hasUnansweredQuestions = setEntries.some(entry => entry.flag === null);
+          
+          if (hasUnansweredQuestions) {
+            // Found a set with unanswered questions
+            console.log(`Set ${currentSetToCheck} has unanswered questions`);
+            return currentSetToCheck;
+          }
+          
+          // No unanswered questions in this set, try the next one
+          currentSetToCheck++;
+        } catch (error) {
+          // If we can't load the file, we've likely reached the end of available sets
+          console.log(`Reached the end of available sets at set ${currentSetToCheck-1}`);
+          break;
+        }
+      }
+      
+      // If we've checked all sets and they're all answered, return the max set found + 1
+      // This creates a new set when all existing ones are complete
+      return maxSetFound + 1;
+    } catch (error) {
+      console.error('Error finding unanswered set:', error);
+      return startSet; // Fall back to the starting set on error
+    }
+  };
 
   const loadQuestions = async () => {
     try {
@@ -20,12 +65,20 @@ export function useQuestions() {
       console.log('Loaded entries:', loadedEntries);
       setEntries(loadedEntries);
       
-      // Find the first unanswered and non-skipped question
-      const firstUnansweredIndex = loadedEntries.findIndex(
-        (entry, index) => entry.flag === null && !skippedQuestions.has(index)
-      );
+      // Find the first unanswered question (ignoring skipped ones which have flag === 3)
+      const firstUnansweredIndex = loadedEntries.findIndex(entry => entry.flag === null);
       console.log('First unanswered index:', firstUnansweredIndex);
-      setCurrentIndex(firstUnansweredIndex >= 0 ? firstUnansweredIndex : 0);
+      
+      if (firstUnansweredIndex >= 0) {
+        setCurrentIndex(firstUnansweredIndex);
+      } else {
+        // If all questions in this set have been answered or skipped,
+        // we'll show the complete page by setting index to 0
+        setCurrentIndex(0);
+      }
+      
+      // Track the highest set number we've found
+      setMaxSetChecked(Math.max(maxSetChecked, questionSet.currentSet));
       setLoading(false);
     } catch (error) {
       console.error('Error loading questions:', error);
@@ -45,14 +98,8 @@ export function useQuestions() {
       await updateEntry(`data/set_${questionSet.currentSet}.jsonl`, currentIndex, updates);
       console.log('Successfully updated entry');
 
-      // Remove from skipped questions if it was skipped
-      if (skippedQuestions.has(currentIndex)) {
-        const newSkipped = new Set(skippedQuestions);
-        newSkipped.delete(currentIndex);
-        setSkippedQuestions(newSkipped);
-      }
-
-      // Reload questions to get the updated state
+      // Reload questions to find the next unanswered one in this set
+      // This will automatically show the complete page if all are answered
       await loadQuestions();
     } catch (error) {
       console.error('Error handling choice:', error);
@@ -60,70 +107,82 @@ export function useQuestions() {
   };
 
   const skipRemainingQuestions = async () => {
-    // Get all remaining unanswered questions
-    const remainingQuestions = entries.reduce((acc: number[], entry, index) => {
-      if (entry.flag === null && !skippedQuestions.has(index)) {
-        acc.push(index);
+    try {
+      // Get all remaining unanswered questions
+      const remainingQuestions = entries.reduce((acc: number[], entry, index) => {
+        if (entry.flag === null) {
+          acc.push(index);
+        }
+        return acc;
+      }, []);
+
+      // Update all remaining questions with flag 3 (skipped) in the file
+      for (const index of remainingQuestions) {
+        await updateEntry(`data/set_${questionSet.currentSet}.jsonl`, index, { flag: 3 });
       }
-      return acc;
-    }, []);
 
-    // Add all remaining questions to skipped set
-    const newSkipped = new Set(skippedQuestions);
-    remainingQuestions.forEach(index => newSkipped.add(index));
-    setSkippedQuestions(newSkipped);
-
-    // This will trigger the isComplete check and show the "Load Next Set" page
-    await loadQuestions();
+      // This will show the complete page since all questions are now answered or skipped
+      await loadQuestions();
+    } catch (error) {
+      console.error('Error skipping remaining questions:', error);
+    }
   };
 
-  const handleSkip = () => {
-    // Add current question to skipped set
-    const newSkipped = new Set(skippedQuestions);
-    newSkipped.add(currentIndex);
-    setSkippedQuestions(newSkipped);
-
-    // Find next non-skipped question
-    const nextIndex = findNextQuestion(currentIndex);
-    setCurrentIndex(nextIndex);
+  const handleSkip = async () => {
+    try {
+      // Mark current question as skipped (flag = 3) in the file
+      await updateEntry(`data/set_${questionSet.currentSet}.jsonl`, currentIndex, { flag: 3 });
+      console.log(`Marked question ${currentIndex} as skipped in the file`);
+      
+      // Find next unanswered question
+      const nextIndex = findNextQuestion(currentIndex);
+      
+      if (nextIndex === currentIndex) {
+        // If we couldn't find another unanswered question, reload
+        // This will trigger the isComplete check
+        await loadQuestions();
+      } else {
+        setCurrentIndex(nextIndex);
+      }
+    } catch (error) {
+      console.error('Error handling skip:', error);
+    }
   };
 
   const findNextQuestion = (currentIdx: number): number => {
-    // First try to find the next unanswered, non-skipped question after current index
+    // First try to find the next unanswered question after current index
     for (let i = currentIdx + 1; i < entries.length; i++) {
-      if (entries[i].flag === null && !skippedQuestions.has(i)) {
+      if (entries[i].flag === null) {
         return i;
       }
     }
     
     // If not found, look from the beginning
     for (let i = 0; i < currentIdx; i++) {
-      if (entries[i].flag === null && !skippedQuestions.has(i)) {
+      if (entries[i].flag === null) {
         return i;
       }
     }
     
-    // If no unanswered non-skipped questions remain, show first skipped question
-    const firstSkipped = Array.from(skippedQuestions)[0];
-    if (firstSkipped !== undefined) {
-      return firstSkipped;
-    }
-    
-    // If no questions available, stay on current
+    // If no unanswered questions remain, stay on current
     return currentIdx;
   };
 
-  const loadNextSet = () => {
+  const loadNextSet = async () => {
     setLoading(true);
-    setSkippedQuestions(new Set());
-    setQuestionSet(prev => ({ ...prev, currentSet: prev.currentSet + 1 }));
+    
+    // Find the first unanswered set starting from the next one
+    const nextUnansweredSet = await findFirstUnansweredSet(questionSet.currentSet + 1);
+    
+    // Load the next unanswered set
+    setQuestionSet({ currentSet: nextUnansweredSet });
   };
 
-  const isComplete = entries.every((entry, index) => 
-    entry.flag !== null || skippedQuestions.has(index)
-  );
+  // Check if all questions have been answered or skipped
+  const isComplete = entries.every(entry => entry.flag !== null);
 
-  const hasSkippedQuestions = skippedQuestions.size > 0;
+  // Check if any questions are skipped (flag = 3)
+  const hasSkippedQuestions = entries.some(entry => entry.flag === 3);
 
   return {
     currentEntry: entries[currentIndex],
