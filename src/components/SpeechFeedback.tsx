@@ -112,14 +112,14 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
         toggleListening();
       }
       //  'c' key for clear
-      else if (event.key.toLowerCase() === 'c' && !event.ctrlKey && !event.metaKey) {
-        event.preventDefault();
-        setFeedback('');
-        setCurrentTranscript('');
-        if (isListening) {
-          recognition?.stop();
-        }
-      }
+      // else if (event.key.toLowerCase() === 'c' && !event.ctrlKey && !event.metaKey) {
+      //   event.preventDefault();
+      //   setFeedback('');
+      //   setCurrentTranscript('');
+      //   if (isListening) {
+      //     recognition?.stop();
+      //   }
+      // }
     };
 
     window.addEventListener('keydown', handleKeyPress);
@@ -159,7 +159,7 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
 
   // prevents input keys of recording to be typed in the input box 
   const handleTextareaKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if ((event.key === 'ArrowUp' || event.key.toLowerCase() === 'c') && !event.ctrlKey && !event.metaKey) {
+    if ((event.key === 'ArrowUp') && !event.ctrlKey && !event.metaKey) {
       event.preventDefault();
     }
     if (event.key === 'Enter' && !event.shiftKey) {
