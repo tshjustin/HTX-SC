@@ -37,5 +37,5 @@ interface SpeechRecognitionEvent extends Event {
   
   interface Window {
     SpeechRecognition: SpeechRecognitionConstructor;
-    webkitSpeechRecognition: SpeechRecognitionConstructor;
+    webkitSpeechRecognition: SpeechRecognitionConstructor; // webspeech API 
   }
