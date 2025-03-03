@@ -187,7 +187,7 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               onKeyDown={handleTextareaKeyDown}
-              placeholder="Please provide your feedback...&#10;&#10;For voice, press V once to record. Feedback is recorded after pausing."             
+              placeholder="Please provide your feedback...&#10;&#10;For voice, press ↑ once to record."             
               className="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               rows={4}
             />

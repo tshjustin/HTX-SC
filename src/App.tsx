@@ -118,13 +118,19 @@ function App() {
                   alt="HTX Logo" 
                   className="h-20 object-contain"
                 />
-                <div className="ml-auto text-2xl font-semibold text-purple-800">
-                  Set {currentSet} ({Math.min(currentIndex + 1, totalQuestions)} / {totalQuestions})
-                </div>  
+                {/* Updated set number display with a more obvious box */}
+                <div className="ml-auto">
+                  <div className="bg-purple-700 text-white px-6 py-3 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    <div className="text-2xl font-bold">Set {currentSet}</div>
+                    <div className="text-xl font-medium mt-1 text-purple-100">
+                      Question {Math.min(currentIndex + 1, totalQuestions)} of {totalQuestions}
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="flex flex-col items-center -mt-16">
-                <h1 className="text-4xl font-bold text-purple-800 mb-4">
-                  Help train Home Team’s AI !
+                <h1 className="text-5xl font-bold text-purple-800 mb-4">
+                  Help Train Home Team's AI model!
                 </h1>
                 <div className="h-1 w-[70%] bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 bg-300% animate-gradient rounded-full"></div>
               </div>
