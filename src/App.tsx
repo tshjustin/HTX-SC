@@ -50,7 +50,8 @@ function App() {
             onChoice(2);
             break;
           case 'arrowdown':
-            handleSkip();
+            // Use the skip flag (3) for skipped questions
+            onSkip();
             break;
           case 'p':
             if (!event.ctrlKey && !event.metaKey) {
@@ -72,6 +73,11 @@ function App() {
       handleChoice(flag);
       setShowFeedback(false);
     }
+  };
+
+  const onSkip = () => {
+    // Skip using flag 3
+    handleSkip();
   };
 
   const submitFeedback = () => {
@@ -208,7 +214,7 @@ function App() {
                   {/* Main skip button */}
                   <div className="flex justify-center">
                     <button
-                      onClick={handleSkip}
+                      onClick={onSkip}
                       className="flex items-center gap-2 px-8 py-4 text-xl text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
                       title="Press ↓ Down Arrow"
                     >
