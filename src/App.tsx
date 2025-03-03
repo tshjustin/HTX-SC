@@ -118,13 +118,13 @@ function App() {
                   alt="HTX Logo" 
                   className="h-20 object-contain"
                 />
-                <div className="ml-auto text-lg font-semibold text-purple-800">
+                <div className="ml-auto text-2xl font-semibold text-purple-800">
                   Set {currentSet} ({Math.min(currentIndex + 1, totalQuestions)} / {totalQuestions})
-                </div>
+                </div>  
               </div>
               <div className="flex flex-col items-center -mt-16">
                 <h1 className="text-4xl font-bold text-purple-800 mb-4">
-                  Help us Train our AI Model! 
+                  Help train Home Team’s AI !
                 </h1>
                 <div className="h-1 w-[70%] bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 bg-300% animate-gradient rounded-full"></div>
               </div>

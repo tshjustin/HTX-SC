@@ -94,7 +94,7 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
       }
     }
 
-    // Add keyboard listeners for arrow keys, 'v' and 'c' keys
+    // Add keyboard listeners for arrow keys, 'UPARROW' and 'c' keys
     const handleKeyPress = (event: KeyboardEvent) => {
       // Left arrow for submit
       if (event.key === 'ArrowLeft') {
@@ -106,8 +106,8 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
         event.preventDefault();
         onCancel();
       }
-      //  'v' key for toggle recording
-      else if (event.key.toLowerCase() === 'v' && !event.ctrlKey && !event.metaKey) {
+      //  'UPARROW' key for toggle recording
+      else if (event.key === 'ArrowUp' && !event.ctrlKey && !event.metaKey) {
         event.preventDefault();
         toggleListening();
       }
@@ -134,7 +134,7 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
   const toggleListening = () => {
     if (!recognition) {
       console.error('No speech recognition instance available');
-      alert('Running on localhost or HTTPS');
+      alert('Must run on localhost or HTTPS');
       return;
     }
 
@@ -159,7 +159,7 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
 
   // prevents input keys of recording to be typed in the input box 
   const handleTextareaKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if ((event.key.toLowerCase() === 'v' || event.key.toLowerCase() === 'c') && !event.ctrlKey && !event.metaKey) {
+    if ((event.key === 'ArrowUp' || event.key.toLowerCase() === 'c') && !event.ctrlKey && !event.metaKey) {
       event.preventDefault();
     }
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -215,7 +215,7 @@ const SpeechFeedback = ({ feedback, setFeedback, onSubmit, onCancel }: SpeechFee
               ) : (
                 <>
                   <Mic className="w-5 h-5" />
-                  Press V to Start Recording
+                  Press ↑ to Start Recording
                 </>
               )}
             </button>
